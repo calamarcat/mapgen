@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Splatoon Map Generator</title>
+
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+    <script>
+        window.onload = function() {
+            var maps = new Maps();
+            maps.createMaps();
+            var ui = new UI("mapSelect", "mapOutput");
+            document.getElementById("simpleBtn").onclick = function() {
+                document.getElementById("mapSelect").innerHTML = "";
+                return ui.genSimpleMapOptions(maps);
+            };
+            document.getElementById("advancedBtn").onclick = function() {
+                document.getElementById("mapSelect").innerHTML = "";
+                return ui.genAdvancedMapOptions(maps);
+            };
+        };
+    </script>
+</head>
+<body>
+
+    <button id="simpleBtn">Simple Map Gen</button>
+    <button id="advancedBtn">Advanced Map Gen</button>
+
+    <div id="mapSelect"></div>
+    <div id="mapOutput"></div>
+
+    <script src="resources/weights.js"></script>
+    <script src="js/maps.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html>
