@@ -142,7 +142,7 @@ var Maps = function() {
                 }
                 mapWeight = mapWeight/numWeights;
 
-                var prob = Math.random() / 2;
+                var prob = Math.random();
                 if (mapWeight > prob && checkSimpleMap(mapList, map, modeList.length, stageList.length)) {
                     break;
                 }
@@ -171,7 +171,7 @@ var Maps = function() {
                 var idx = Math.floor(Math.random() * inputMaps.length);
                 map = inputMaps[idx];
 
-                var prob = Math.random() / 2;
+                var prob = Math.random();
                 if (map.weight > prob && checkAdvancedMap(mapList, map, modeList, inputMaps.length)) {
                     break;
                 }
