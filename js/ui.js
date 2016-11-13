@@ -5,30 +5,58 @@ var UI = function(inputDivId, outputDivId) {
     var modeListId = "modeList";
     var stageListId = "stageList";
 
+    var genRoundsOptions = function(parent) {
+        var roundMaps = document.createElement("DIV");
+        roundMaps.id = "roundMapsDiv";
+        var roundText = document.createElement("P");
+        roundText.innerHTML = "Please enter the number of rounds and maps per round. ";
+        roundText.className = "helpText";
+        roundMaps.appendChild(roundText);
+
+        roundMaps.appendChild(document.createTextNode("Rounds: "));
+        var rounds = document.createElement("INPUT");
+        rounds.maxLength = 4;
+        rounds.size = 4;
+        roundMaps.appendChild(rounds);
+
+        roundMaps.appendChild(document.createElement("BR"));
+
+        roundMaps.appendChild(document.createTextNode("Maps: "));
+        var maps = document.createElement("INPUT");
+        maps.maxLength = 4;
+        maps.size = 4;
+        roundMaps.appendChild(maps);
+
+        parent.appendChild(roundMaps);
+
+        return {
+            maps: maps,
+            rounds: rounds
+        };
+    };
+
     var genSimpleMapOptions = function (maps) {
         var div = document.getElementById(inputDivId);
         var modes = maps.getModes();
         var stages = maps.getStages();
 
-        // Get number of rounds
-        var roundText = document.createElement("P");
-        roundText.innerHTML = "Please enter the number of rounds: ";
-        roundText.className = "helpText";
-        div.appendChild(roundText);
-        var rounds = document.createElement("INPUT");
-        div.appendChild(rounds);
+        var roundMaps = genRoundsOptions(div);
+
+        var mapSelectDiv = document.createElement("DIV");
+        mapSelectDiv.id = "mapSelectDiv";
 
         // Help text
         var helpText = document.createElement("P");
         helpText.innerHTML = "Please select which modes and stages you want to include. If you don't select any modes " +
             "the algorithm will assume you only want randomise stages, and vice versa.";
         helpText.className = "helpText";
-        div.appendChild(helpText);
+        mapSelectDiv.appendChild(helpText);
 
         // Generate mode options
-        var modeHeading = document.createTextNode("Match Modes:");
-        modeHeading.className = "helpText";
-        div.appendChild(modeHeading);
+        var modeHeading = document.createElement("P");
+        modeHeading.innerHTML = "Modes:";
+        modeHeading.className = "helpText listHeading";
+        mapSelectDiv.appendChild(modeHeading);
 
         var modeList = document.createElement("UL");
         modeList.id = modeListId;
@@ -45,12 +73,13 @@ var UI = function(inputDivId, outputDivId) {
                 modeList.appendChild(listItem);
             }
         }
-        div.appendChild(modeList);
+        mapSelectDiv.appendChild(modeList);
 
         // Generate stage options
-        stageHeading = document.createTextNode("Match Stages:");
-        stageHeading.className = "helpText";
-        div.appendChild(stageHeading);
+        var stageHeading = d = document.createElement("P");
+        stageHeading.innerHTML = "Stages:";
+        stageHeading.className = "helpText listHeading";
+        mapSelectDiv.appendChild(stageHeading);
 
         var stageList = document.createElement("UL");
         stageList.id = stageListId;
@@ -67,20 +96,19 @@ var UI = function(inputDivId, outputDivId) {
                 stageList.appendChild(listItem);
             }
         }
-        div.appendChild(stageList);
-
-        // TODO: add way to add exceptions!
+        mapSelectDiv.appendChild(stageList);
 
         // Add button to submit options
         var button = document.createElement("BUTTON");
         button.onclick = function() {
             var options = getSimpleMapOptions();
-            // TODO: add input validation!
-            var output = maps.createSimpleMaps(options.modeList, options.stageList, rounds.value);
+            var output = maps.createSimpleMaps(options.modeList, options.stageList, roundMaps.rounds.value * roundMaps.maps.value);
             return outputMaps(output);
         };
         button.appendChild(document.createTextNode("Submit"));
-        div.appendChild(button);
+        mapSelectDiv.appendChild(button);
+
+        div.appendChild(mapSelectDiv);
 
     };
 
@@ -115,13 +143,10 @@ var UI = function(inputDivId, outputDivId) {
         var stages = maps.getStages();
         var weights = maps.getWeights();
 
-        // Get number of rounds
-        var roundText = document.createElement("P");
-        roundText.innerHTML = "Please enter the number of rounds: ";
-        roundText.className = "helpText";
-        div.appendChild(roundText);
-        var rounds = document.createElement("INPUT");
-        div.appendChild(rounds);
+        var roundMaps = genRoundsOptions(div);
+
+        var mapSelectDiv = document.createElement("DIV");
+        mapSelectDiv.id = "mapSelectDiv";
 
         // Help text
         var helpText = document.createElement("P");
@@ -129,41 +154,7 @@ var UI = function(inputDivId, outputDivId) {
             "higher the value the more often the map/mode combination will appear. The default values are based on how" +
             "often the maps were chosen in ranked over this year.";
         helpText.className = "helpText";
-        div.appendChild(helpText);
-
-        // Generate mode options
-        // for (var mode in modes) {
-        //     if (modes.hasOwnProperty(mode)) {
-        //         var modeListDiv = document.createElement("DIV");
-        //         modeListDiv.className = "modeListDiv";
-        //         var modeListName = document.createElement("P");
-        //         modeListName.innerHTML = modes[mode];
-        //         modeListName.className = "helpText";
-        //         modeListDiv.appendChild(modeListName);
-        //
-        //         var modeList = document.createElement("UL");
-        //         modeList.id = "modesList";
-        //         modeList.className = "modeList";
-        //
-        //         for (var stage in stages) {
-        //             if (stages.hasOwnProperty(stage)) {
-        //                 // Generate stage options
-        //                 var listItem = document.createElement("LI");
-        //                 var box = document.createElement("INPUT");
-        //                 box.name = stages[stage];
-        //                 box.maxlength = 4;
-        //                 box.size = 4;
-        //                 box.value = weights.maps[modes[mode]][stages[stage]];
-        //                 var label = document.createTextNode(stages[stage]);
-        //                 listItem.appendChild(box);
-        //                 listItem.appendChild(label);
-        //                 modeList.appendChild(listItem);
-        //             }
-        //         }
-        //         modeListDiv.appendChild(modeList);
-        //         div.appendChild(modeListDiv);
-        //     }
-        // }
+        mapSelectDiv.appendChild(helpText);
 
         var optionTable = document.createElement("TABLE");
         var modeHeadings = document.createElement("THEAD");
@@ -202,7 +193,10 @@ var UI = function(inputDivId, outputDivId) {
                 })(mode, maps);
 
                 var content = document.createElement("P");
-                content.appendChild(document.createTextNode(modes[mode]));
+                var name = document.createElement("SPAN");
+                name.innerHTML = modes[mode];
+                name.className = "thName";
+                content.appendChild(name);
                 content.appendChild(document.createElement("BR"));
                 content.appendChild(document.createTextNode("("));
                 content.appendChild(defaultLink);
@@ -223,8 +217,51 @@ var UI = function(inputDivId, outputDivId) {
             if (stages.hasOwnProperty(stage)) {
                 var row = document.createElement("TR");
                 var rowHeading = document.createElement("TH");
-                rowHeading.innerHTML = stages[stage];
+
+                var defaultLink = document.createElement("SPAN");
+                defaultLink.innerHTML = "Defaults";
+                defaultLink.className = "modeShortcut modeDefault";
+                defaultLink.onclick = (function(stage, maps) {
+                    return function() {
+                        setAllStage("default", stage, maps);
+                    };
+                })(stage, maps);
+
+                var equalLink = document.createElement("SPAN");
+                equalLink.innerHTML = "Equal";
+                equalLink.className = "modeShortcut modeEqual";
+                equalLink.onclick = (function(stage, maps) {
+                    return function() {
+                        setAllStage(1, stage, maps);
+                    };
+                })(stage, maps);
+                var noneLink = document.createElement("SPAN");
+                noneLink.innerHTML = "None";
+                noneLink.className = "modeShortcut modeNone";
+                noneLink.onclick = (function(stage, maps) {
+                    return function() {
+                        setAllStage(0, stage, maps);
+                    };
+                })(stage, maps);
+
+                var content = document.createElement("P");
+                var name = document.createElement("SPAN");
+                name.innerHTML = stages[stage];
+                name.className = "thName";
+                content.appendChild(name);
+                content.appendChild(document.createElement("BR"));
+                content.appendChild(document.createTextNode("("));
+                content.appendChild(defaultLink);
+                content.appendChild(document.createTextNode(" / "));
+                content.appendChild(equalLink);
+                content.appendChild(document.createTextNode(" / "));
+                content.appendChild(noneLink);
+                content.appendChild(document.createTextNode(")"));
+
+                rowHeading.appendChild(content);
+
                 row.appendChild(rowHeading);
+
                 for (var mode in modes) {
                     if (modes.hasOwnProperty(mode)) {
                         var cell = document.createElement("TD");
@@ -240,47 +277,48 @@ var UI = function(inputDivId, outputDivId) {
                 optionTable.appendChild(row);
             }
         }
-        div.appendChild(optionTable);
+        mapSelectDiv.appendChild(optionTable);
 
         // Add button to submit options
         var button = document.createElement("BUTTON");
         button.onclick = function() {
             var options = getAdvancedMapOptions(maps);
-            // TODO: add input validation!
-            var output = maps.createAdvancedMaps(options.outputMaps, options.modeList, rounds.value);
+            var output = maps.createAdvancedMaps(options.outputMaps, options.modeList, roundMaps.rounds.value * roundMaps.maps.value);
             return outputMaps(output);
         };
         button.appendChild(document.createTextNode("Submit"));
-        div.appendChild(button);
+        mapSelectDiv.appendChild(button);
+
+        div.appendChild(mapSelectDiv);
 
     };
 
     var getAdvancedMapOptions = function(maps) {
         var mapModes = maps.getModes();
+        var mapStages = maps.getStages();
         var outputMaps = [];
         var modeList = {};
 
         // Get mode lists
-        var modes = document.getElementsByClassName("modeList");
-        for (var mode in modes) {
-            if (modes.hasOwnProperty(mode)) {
-                var stages = modes[mode].getElementsByTagName("INPUT");
-                for (var stage in stages) {
-                    if (stages.hasOwnProperty(stage)) {
-                        if (stages[stage].value > 0) {
-                            var map = maps.findMap(mapModes[mode], stages[stage].name);
-                            map.weight = stages[stage].value;
-                            outputMaps.push(map);
+        var stages = document.getElementsByTagName("TABLE")[0].getElementsByTagName("TR");
+        for (var stage in stages) {
+            if (stages.hasOwnProperty(stage)) {
+                var modes = stages[stage].getElementsByTagName("INPUT");
+                for (var mode in modes) {
+                    if (modes.hasOwnProperty(mode)) {
+                        var map = maps.findMap(mapModes[mode], mapStages[stage]);
+                        map.weight = stages[stage].value;
+                        outputMaps.push(map);
 
-                            if (modeList[mapModes[mode]] === undefined) {
-                                modeList[mapModes[mode]] = 0
-                            }
-                            modeList[mapModes[mode]] += 1;
+                        if (modeList[mapModes[mode]] === undefined) {
+                            modeList[mapModes[mode]] = 0
                         }
+                        modeList[mapModes[mode]] += 1;
                     }
                 }
             }
         }
+
         return {
             outputMaps: outputMaps,
             modeList: modeList
@@ -313,12 +351,12 @@ var UI = function(inputDivId, outputDivId) {
 
         var table = document.getElementsByTagName("TABLE")[0];
         var rows = table.getElementsByTagName("TR");
-        var cells = rows[stageIdx + 1].getElementsByTagName("INPUT");
-        for (var cell in cells) {
+        var cells = rows[stageIdx].getElementsByTagName("INPUT");
+        for (var c = 0; c < cells.length; c++) {
             if (value === "default") {
-                cells[cell].value = weights.maps[modes[cell]][stages[stageIdx]];
+                cells[c].value = weights.maps[modes[c]][stages[stageIdx]];
             } else {
-                cells[cell].value = value;
+                cells[c].value = value;
             }
         }
     };

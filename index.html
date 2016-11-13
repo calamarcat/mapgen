@@ -10,14 +10,17 @@
     <script>
         window.onload = function() {
             var maps = new Maps();
-            maps.createMaps();
-            var ui = new UI("mapSelect", "mapOutput");
+            var ui = new UI("input", "output");
             document.getElementById("simpleBtn").onclick = function() {
-                document.getElementById("mapSelect").innerHTML = "";
+                document.getElementById("input").innerHTML = "";
+                document.getElementById("output").innerHTML = "";
+                maps.createMaps();
                 return ui.genSimpleMapOptions(maps);
             };
             document.getElementById("advancedBtn").onclick = function() {
-                document.getElementById("mapSelect").innerHTML = "";
+                document.getElementById("input").innerHTML = "";
+                document.getElementById("output").innerHTML = "";
+                maps.createMaps();
                 return ui.genAdvancedMapOptions(maps);
             };
         };
@@ -28,8 +31,8 @@
     <button id="simpleBtn">Simple Map Gen</button>
     <button id="advancedBtn">Advanced Map Gen</button>
 
-    <div id="mapSelect"></div>
-    <div id="mapOutput"></div>
+    <div id="input"></div>
+    <div id="output"></div>
 
     <script src="resources/weights.js"></script>
     <script src="js/maps.js"></script>

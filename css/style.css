@@ -2,8 +2,12 @@ body {
     padding: 5px;
 }
 
-#mapSelect, #mapOutput {
+#input, #output {
     margin: 10px 0;
+}
+
+#roundMapsDiv, #mapSelectDiv {
+    margin: 20px 0;
 }
 
 .modeListDiv {
@@ -17,8 +21,14 @@ body {
     margin: 10px 0;
 }
 
+.listHeading {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
 ul {
-    margin: 0 0 10px;
+    margin: 10px;
+    list-style-type: none;
 }
 
 ol, ol li {
@@ -27,12 +37,56 @@ ol, ol li {
 
 input {
     /*width: 25px;*/
-    margin: 3px;
-    margin-right: 7px;
+    margin: 5px auto;
     text-align: center;
     padding: 2px 0;
 }
 
-button {
-    display: block;
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+table {
+    border: 2px solid #555;
+    margin: 10px 0;
+}
+
+thead {
+    border-bottom: 2px solid #555;
+}
+
+tr:nth-child(2n) {
+    background-color: #eee;
+}
+
+tr:nth-child(2n + 1) {
+    background-color: #f8f8f8;
+}
+
+th, td {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    width: 100px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+th {
+    padding: 5px;
+    font-size: 0.8em;
+}
+
+th .thName {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+tr th:first-child {
+    width: 150px;
+}
+
+.modeShortcut, .stageShortcut {
+    font-weight: normal;
+    cursor: pointer;
+    text-decoration: underline;
 }
