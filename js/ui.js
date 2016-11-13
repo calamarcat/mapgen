@@ -132,38 +132,115 @@ var UI = function(inputDivId, outputDivId) {
         div.appendChild(helpText);
 
         // Generate mode options
+        // for (var mode in modes) {
+        //     if (modes.hasOwnProperty(mode)) {
+        //         var modeListDiv = document.createElement("DIV");
+        //         modeListDiv.className = "modeListDiv";
+        //         var modeListName = document.createElement("P");
+        //         modeListName.innerHTML = modes[mode];
+        //         modeListName.className = "helpText";
+        //         modeListDiv.appendChild(modeListName);
+        //
+        //         var modeList = document.createElement("UL");
+        //         modeList.id = "modesList";
+        //         modeList.className = "modeList";
+        //
+        //         for (var stage in stages) {
+        //             if (stages.hasOwnProperty(stage)) {
+        //                 // Generate stage options
+        //                 var listItem = document.createElement("LI");
+        //                 var box = document.createElement("INPUT");
+        //                 box.name = stages[stage];
+        //                 box.maxlength = 4;
+        //                 box.size = 4;
+        //                 box.value = weights.maps[modes[mode]][stages[stage]];
+        //                 var label = document.createTextNode(stages[stage]);
+        //                 listItem.appendChild(box);
+        //                 listItem.appendChild(label);
+        //                 modeList.appendChild(listItem);
+        //             }
+        //         }
+        //         modeListDiv.appendChild(modeList);
+        //         div.appendChild(modeListDiv);
+        //     }
+        // }
+
+        var optionTable = document.createElement("TABLE");
+        var modeHeadings = document.createElement("THEAD");
+        var corner = document.createElement("TH");
+        corner.innerHTML = " ";
+        modeHeadings.appendChild(corner);
+
         for (var mode in modes) {
             if (modes.hasOwnProperty(mode)) {
-                var modeListDiv = document.createElement("DIV");
-                modeListDiv.className = "modeListDiv";
-                var modeListName = document.createElement("P");
-                modeListName.innerHTML = modes[mode];
-                modeListName.className = "helpText";
-                modeListDiv.appendChild(modeListName);
+                var colHeading = document.createElement("TH");
 
-                var modeList = document.createElement("UL");
-                modeList.id = "modesList";
-                modeList.className = "modeList";
+                var defaultLink = document.createElement("SPAN");
+                defaultLink.innerHTML = "Defaults";
+                defaultLink.className = "modeShortcut modeDefault";
+                defaultLink.onclick = (function(mode, maps) {
+                    return function() {
+                        setAllMode("default", mode, maps);
+                    };
+                })(mode, maps);
 
-                for (var stage in stages) {
-                    if (stages.hasOwnProperty(stage)) {
-                        // Generate stage options
-                        var listItem = document.createElement("LI");
+                var equalLink = document.createElement("SPAN");
+                equalLink.innerHTML = "Equal";
+                equalLink.className = "modeShortcut modeEqual";
+                equalLink.onclick = (function(mode, maps) {
+                    return function() {
+                        setAllMode(1, mode, maps);
+                    };
+                })(mode, maps);
+                var noneLink = document.createElement("SPAN");
+                noneLink.innerHTML = "None";
+                noneLink.className = "modeShortcut modeNone";
+                noneLink.onclick = (function(mode, maps) {
+                    return function() {
+                        setAllMode(0, mode, maps);
+                    };
+                })(mode, maps);
+
+                var content = document.createElement("P");
+                content.appendChild(document.createTextNode(modes[mode]));
+                content.appendChild(document.createElement("BR"));
+                content.appendChild(document.createTextNode("("));
+                content.appendChild(defaultLink);
+                content.appendChild(document.createTextNode(" / "));
+                content.appendChild(equalLink);
+                content.appendChild(document.createTextNode(" / "));
+                content.appendChild(noneLink);
+                content.appendChild(document.createTextNode(")"));
+                colHeading.appendChild(content);
+
+                modeHeadings.appendChild(colHeading);
+            }
+        }
+        optionTable.appendChild(modeHeadings);
+
+        // Create table with stage headings
+        for (var stage in stages) {
+            if (stages.hasOwnProperty(stage)) {
+                var row = document.createElement("TR");
+                var rowHeading = document.createElement("TH");
+                rowHeading.innerHTML = stages[stage];
+                row.appendChild(rowHeading);
+                for (var mode in modes) {
+                    if (modes.hasOwnProperty(mode)) {
+                        var cell = document.createElement("TD");
                         var box = document.createElement("INPUT");
                         box.name = stages[stage];
                         box.maxlength = 4;
                         box.size = 4;
                         box.value = weights.maps[modes[mode]][stages[stage]];
-                        var label = document.createTextNode(stages[stage]);
-                        listItem.appendChild(box);
-                        listItem.appendChild(label);
-                        modeList.appendChild(listItem);
+                        cell.appendChild(box);
+                        row.appendChild(cell);
                     }
                 }
-                modeListDiv.appendChild(modeList);
-                div.appendChild(modeListDiv);
+                optionTable.appendChild(row);
             }
         }
+        div.appendChild(optionTable);
 
         // Add button to submit options
         var button = document.createElement("BUTTON");
@@ -208,6 +285,42 @@ var UI = function(inputDivId, outputDivId) {
             outputMaps: outputMaps,
             modeList: modeList
         };
+    };
+
+    var setAllMode = function(value, modeIdx, maps) {
+        var modes = maps.getModes();
+        var stages = maps.getStages();
+        var weights = maps.getWeights();
+
+        var table = document.getElementsByTagName("TABLE")[0];
+        var rows = table.getElementsByTagName("TR");
+        for (var row in rows) {
+            if (rows.hasOwnProperty(row)) {
+                var cells = rows[row].getElementsByTagName("INPUT");
+                if (value === "default") {
+                    cells[modeIdx].value = weights.maps[modes[modeIdx]][stages[row]];
+                } else {
+                    cells[modeIdx].value = value;
+                }
+            }
+        }
+    };
+
+    var setAllStage = function(value, stageIdx, maps) {
+        var modes = maps.getModes();
+        var stages = maps.getStages();
+        var weights = maps.getWeights();
+
+        var table = document.getElementsByTagName("TABLE")[0];
+        var rows = table.getElementsByTagName("TR");
+        var cells = rows[stageIdx + 1].getElementsByTagName("INPUT");
+        for (var cell in cells) {
+            if (value === "default") {
+                cells[cell].value = weights.maps[modes[cell]][stages[stageIdx]];
+            } else {
+                cells[cell].value = value;
+            }
+        }
     };
 
     var outputMaps = function(maps) {
