@@ -21,7 +21,7 @@ var UI = function(inputDivId, outputDivId) {
 
         roundMaps.appendChild(document.createElement("BR"));
 
-        roundMaps.appendChild(document.createTextNode("Maps: "));
+        roundMaps.appendChild(document.createTextNode("Games per round: "));
         var maps = document.createElement("INPUT");
         maps.maxLength = 4;
         maps.size = 4;
